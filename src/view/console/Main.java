@@ -1,8 +1,9 @@
 package view.console;
 
+import exceptions.CompaniaNoEncontradaException;
+import exceptions.CredencialesIncorrectasException;
 import model.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +55,12 @@ public class Main {
         System.out.print("Ingrese su contraseña: ");
         String contrasena = scanner.nextLine();
 
-        return autenticacion.iniciarSesion(idCliente, contrasena);
+        try {
+            return autenticacion.iniciarSesion(idCliente, contrasena);
+        } catch (CredencialesIncorrectasException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 
     private static void menuCliente() {
@@ -109,7 +115,11 @@ public class Main {
                     Vuelo.mostrarVuelosDisponibles(vuelosDisponibles);
                     break;
                 case 2:
-                    Vuelo.añadirVuelo(scanner, vuelosDisponibles);
+                    try {
+                        Vuelo.añadirVuelo(scanner, vuelosDisponibles);
+                    } catch (CompaniaNoEncontradaException e){
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 case 3:
                     Reservas.verReservas(reservasRealizadas);

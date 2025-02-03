@@ -1,5 +1,7 @@
 package model;
 
+import exceptions.CredencialesIncorrectasException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +20,7 @@ public class Autenticacion {
     }
 
 
-    public Usuario iniciarSesion(String idUsuario, String contrasena) {
+    public Usuario iniciarSesion(String idUsuario, String contrasena) throws CredencialesIncorrectasException {
         for (Cliente cliente : clientes) {
             if (cliente.getIdCliente().equals(idUsuario) && cliente.getContrasena().equals(contrasena)) {
                 System.out.println("Inicio de sesión exitoso como Cliente.");
@@ -34,7 +36,7 @@ public class Autenticacion {
             }
         }
 
-        System.out.println("Credenciales incorrectas.");
-        return null;
+        throw new CredencialesIncorrectasException("Credenciales incorrectas. Por favor, verifica tu usuario y contraseña.");
+
     }
 }
