@@ -126,6 +126,7 @@ public class Reservas {
     public void setTotalPago(Double totalPago) {
         this.totalPago = calcularTotalPago();
     }
+
     public static void realizarReserva(Scanner scanner, List<Vuelo> vuelosDisponibles, List<Reservas> reservasRealizadas) {
         System.out.println("\n--- Realizar una reserva ---");
         System.out.println("1. Elegir destino");
@@ -184,39 +185,51 @@ public class Reservas {
         int cantidadPersonas = scanner.nextInt();
         scanner.nextLine();
 
+
+
         Precio precio = new Precio(vueloSeleccionado.getPrecio(), vueloSeleccionado.getPrecioEquipaje());
 
-
+        List<Asiento> asientosReservados = new ArrayList<>();
         List<Ticket> tickets = new ArrayList<>();
         double precioTotalReserva = 0.0;
+
         for (int i = 1; i <= cantidadPersonas; i++) {
-            System.out.print("Ingrese el nombre del pasajero #" + i + ": ");
-            String nombrePasajero = scanner.nextLine();
+            vueloSeleccionado.mostrarAsientosDisponibles();
+            System.out.print("Seleccione el asiento para el pasajero #" + i + ": ");
+            String numeroAsiento = scanner.nextLine(); // Número de asiento seleccionado
+            Asiento asiento = vueloSeleccionado.seleccionarAsiento(numeroAsiento);
 
-            System.out.print("¿El pasajero #" + i + " lleva equipaje? (s/n): ");
-            String llevaEquipajeInput = scanner.nextLine();
-            boolean llevaEquipaje = llevaEquipajeInput.equalsIgnoreCase("s");
+            if (asiento != null) {
+                asientosReservados.add(asiento);
 
+                System.out.print("Ingrese el nombre del pasajero #" + i + ": ");
+                String nombrePasajero = scanner.nextLine();
 
-            double precioPorPersona = precio.calcularPrecioTotal(llevaEquipaje ? 1 : 0);
-            precioTotalReserva += precioPorPersona;
+                System.out.print("¿El pasajero #" + i + " lleva equipaje? (s/n): ");
+                String llevaEquipajeInput = scanner.nextLine();
+                boolean llevaEquipaje = llevaEquipajeInput.equalsIgnoreCase("s");
 
-            Ticket ticket = new Ticket(
-                    nombrePasajero,
-                    vueloSeleccionado.getCompaniaAerea(),
-                    vueloSeleccionado.getOrigen(),
-                    vueloSeleccionado.getDestino(),
-                    vueloSeleccionado.getHoraSalida(),
-                    vueloSeleccionado.getHoraLlegada(),
-                    precioPorPersona,
-                    llevaEquipaje
-            );
+                double precioPorPersona = precio.calcularPrecioTotal(llevaEquipaje ? 1 : 0);
+                precioTotalReserva += precioPorPersona;
 
+                // Crear el ticket con el número de asiento seleccionado
+                Ticket ticket = new Ticket(
+                        nombrePasajero,
+                        vueloSeleccionado.getCompaniaAerea(),
+                        vueloSeleccionado.getOrigen(),
+                        vueloSeleccionado.getDestino(),
+                        vueloSeleccionado.getHoraSalida(),
+                        vueloSeleccionado.getHoraLlegada(),
+                        precioPorPersona,
+                        llevaEquipaje,
+                        numeroAsiento // Pasar el número de asiento al ticket
+                );
 
-            tickets.add(ticket);
+                tickets.add(ticket);
+            } else {
+                i--; // Repetir la selección para este pasajero
+            }
         }
-
-
         System.out.println("\n--- TICKETS GENERADOS ---");
         for (Ticket ticket : tickets) {
             System.out.println(ticket);
@@ -227,13 +240,12 @@ public class Reservas {
 
         System.out.println("\n--- Realizar Pago ---");
         System.out.print("Ingrese los detalles de pago (ej. número de tarjeta): ");
-        String detallesPago = scanner.nextLine(); // Aquí puedes simular la entrada de detalles de pago
+        String detallesPago = scanner.nextLine();
 
         System.out.print("¿Desea confirmar el pago de " + String.format("%.2f", precioTotalReserva) + " EUR? (s/n): ");
         String confirmacionPago = scanner.nextLine();
 
         if (confirmacionPago.equalsIgnoreCase("s")) {
-            // Si el pago es exitoso, crear una nueva reserva
             Reservas nuevaReserva = new Reservas(
                     "RES-" + (reservasRealizadas.size() + 1),
                     EstadoReserva.CONFIRMADA,
@@ -241,7 +253,7 @@ public class Reservas {
                     LocalDateTime.now(),
                     vueloSeleccionado.getHoraSalida(),
                     vueloSeleccionado.getIdVuelo(),
-                    new ArrayList<>(),
+                    asientosReservados,
                     "Cliente-" + Math.random(),
                     precioTotalReserva,
                     tickets
@@ -324,6 +336,7 @@ public class Reservas {
         System.out.println("Fecha de ida: " + ticketSeleccionado.getFechaSalida());
         System.out.println("Fecha de vuelta: " + ticketSeleccionado.getFechaLlegada());
         System.out.println("Precio total: " + String.format("%.2f", ticketSeleccionado.calcularPrecioTotal()));
+        System.out.println("Asiento: " + ticketSeleccionado.getNumeroAsiento());
     }
     @Override
     public String toString() {

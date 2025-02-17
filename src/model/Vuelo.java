@@ -26,6 +26,7 @@ public class Vuelo {
     private String puertaEmbarque;
     private EstadoVuelo estado;
     private List<Tripulante> tripulantes;
+    private List<Asiento> asientos;
 
     private static List<Vuelo> vuelos = new ArrayList<>();
 
@@ -33,7 +34,9 @@ public class Vuelo {
         this.tripulantes = new ArrayList<>();
     }
 
-    public Vuelo(int idVuelo, String idAvion,  Companias companiaAerea, Ubicacion origen, Ubicacion destino, LocalDateTime horaSalida, LocalDateTime horaLlegada, Double precio, Double precioEquipaje, String nacionalidad, String puertaEmbarque, EstadoVuelo estado) {
+    public Vuelo(int idVuelo, String idAvion, Companias companiaAerea, Ubicacion origen, Ubicacion destino,
+                 LocalDateTime horaSalida, LocalDateTime horaLlegada, Double precio, Double precioEquipaje,
+                 String nacionalidad, String puertaEmbarque, EstadoVuelo estado) {
         this.idVuelo = idVuelo;
         this.idAvion = idAvion;
         this.companiaAerea = companiaAerea;
@@ -47,6 +50,38 @@ public class Vuelo {
         this.puertaEmbarque = puertaEmbarque;
         this.estado = estado;
         this.tripulantes = new ArrayList<>();
+        this.asientos = new ArrayList<>();
+        // Inicializar asientos disponibles
+        for (int i = 1; i <= 50; i++) { // Supongamos que hay 50 asientos
+            asientos.add(new Asiento("A" + i));
+        }
+    }
+    public List<Asiento> getAsientos() {
+        return asientos;
+    }
+    public void mostrarAsientosDisponibles() {
+        System.out.println("\n--- Asientos disponibles ---");
+        for (Asiento asiento : asientos) {
+            if (asiento.isDisponible()) {
+                System.out.print(asiento.getNumeroAsiento() + " ");
+            }
+        }
+        System.out.println();
+    }
+    public Asiento seleccionarAsiento(String numeroAsiento) {
+        for (Asiento asiento : asientos) {
+            if (asiento.getNumeroAsiento().equals(numeroAsiento) ){
+                if (asiento.isDisponible()) {
+                    asiento.setDisponible(false);
+                    return asiento;
+                } else {
+                    System.out.println("El asiento " + numeroAsiento + " no está disponible.");
+                    return null;
+                }
+            }
+        }
+        System.out.println("Asiento no encontrado.");
+        return null;
     }
 
     public int getIdVuelo() {

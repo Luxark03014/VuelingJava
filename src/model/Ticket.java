@@ -11,10 +11,12 @@ public class Ticket {
     private LocalDateTime fechaLlegada;
     private double precioBase;
     private boolean equipajeIncluido;
+    private String numeroAsiento;
+
 
     // Constructor
     public Ticket(String nombrePasajero, Companias companiaAerea, Ubicacion origen, Ubicacion destino,
-                  LocalDateTime fechaSalida, LocalDateTime fechaLlegada, double precioBase, boolean equipajeIncluido) {
+                  LocalDateTime fechaSalida, LocalDateTime fechaLlegada, double precioBase, boolean equipajeIncluido, String numeroAsiento) {
         this.nombrePasajero = nombrePasajero;
         this.companiaAerea = companiaAerea;
         this.origen = origen;
@@ -23,9 +25,12 @@ public class Ticket {
         this.fechaLlegada = fechaLlegada;
         this.precioBase = precioBase;
         this.equipajeIncluido = equipajeIncluido;
+        this.numeroAsiento = numeroAsiento;
     }
 
-
+    public String getNumeroAsiento() {
+        return numeroAsiento;
+    }
     public String getNombrePasajero() {
         return nombrePasajero;
     }
@@ -93,14 +98,13 @@ public class Ticket {
         return equipajeIncluido ? precioBase * 1.1 : precioBase;
     }
 
-    // Método toString()
+
     @Override
     public String toString() {
         return "Ticket [nombrePasajero=" + nombrePasajero + ", companiaAerea=" + companiaAerea +
                 ", origen=" + origen + ", destino=" + destino +
                 ", fechaSalida=" + fechaSalida + ", fechaLlegada=" + fechaLlegada +
-                ", precioBase=" + precioBase + ", luggageIncluded=" + equipajeIncluido +
-                ", precioTotal=" + calcularPrecioTotal() +
-                 ", isEquipajeIncluido=" + equipajeIncluido + "]";
+                ", precioBase=" + precioBase + ", equipajeIncluido=" + equipajeIncluido +
+                ", numeroAsiento=" + numeroAsiento + ", precioTotal=" + calcularPrecioTotal() + "]";
     }
 }
